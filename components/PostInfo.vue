@@ -8,6 +8,7 @@
     <el-button type="warning" size="small" plain
       v-for="tag in post.tags.data"
       :key="tag.id"
+      @click="$router.push(`/tag/${tag.attributes.name}`)"
     >
       #{{ tag.attributes.name }}
     </el-button>

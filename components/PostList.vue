@@ -14,8 +14,8 @@
               :src="post.attributes.image.data[0].attributes.url"
               @click="$router.push(`/posts/${post.id}`)"
             />
-            <div style="padding: 0 15px 15px 15px;">
-
+            <div class="botton-area">
+              <img :src="getIconUrl(post.attributes.category.data.attributes.name)" class="cate-icon">
               <div class="title-container">
                 <h2 class="title" @click="$router.push(`/posts/${post.id}`)">
                   <!-- NuxtLink 怎麼加入變數 -->
@@ -138,6 +138,19 @@ function loadMorePosts() {
     }
   }
 }
+
+function getIconUrl(cate) {
+  switch (cate) {
+    case 'Javascript':
+      return 'icons/js.svg'
+    case 'node.js':
+      return 'icons/nodejs.svg'
+    case 'Vue.js':
+      return 'icons/vuejs.svg'
+    case 'Html':
+      return 'icons/html.svg'
+  }
+}
 </script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap');
@@ -148,60 +161,74 @@ function loadMorePosts() {
     font-weight: 600;
   }
   .title:hover {
-      text-decoration: underline;
-      cursor: pointer;
+    text-decoration: underline;
+    cursor: pointer;
   }
   .filter-category-btn {
-      padding: 8px;
-      margin: 5px;
-      color: #409eff;
-      background-color: #f5f7fa;
-      border: 0;
-      border-radius: 4px;
-      cursor: pointer;
+    padding: 8px;
+    margin: 5px;
+    color: #409eff;
+    background-color: #f5f7fa;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .botton-area {
+    position: relative;
+    padding: 0 15px 15px 15px;
   }
   .active {
       color: #fff;
       background-color: #409eff;
   }
   .post-item {
-      margin-bottom: 19px;
+    margin-bottom: 19px;
   }
   .title-container {
-      height: 85px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+    height: 85px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
   .description-container {
-      height: 75px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      font-family: 'Lora', 'Times New Roman', serif
+    height: 75px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-family: 'Lora', 'Times New Roman', serif
   }
   .date-container {
     color: rgb(26, 26, 26);
     font-size: 1rem;
   }
   .tags-container {
-      margin: 5px 0;
+    margin: 5px 0;
   }
   .v-progressive-image {
-      cursor: pointer;
+    cursor: pointer;
   }
   .v-enter-active,
   .v-leave-active {
-  transition: opacity 0.25s ease;
+    transition: opacity 0.25s ease;
   }
 
   .v-enter-from,
   .v-leave-to {
-  opacity: 0;
+    opacity: 0;
+  }
+
+  .cate-icon {
+    position: absolute;
+    right: 0;
+    right: 5%;
+    top: -30px;
+    width: 20%;
+    height: 20%;
+    z-index: 10;
   }
   
 </style>

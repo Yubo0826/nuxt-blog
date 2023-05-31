@@ -32,9 +32,7 @@ import VueUtterances from "vue-utterances"
 // document.documentElement.scrollTop = 0
 
 const route = useRoute()
-console.log(route)
 const id = route.params.id
-console.log(id)
 // const post = ref()
 // const loading = ref(true)
 const {data: _post} = await useFetch(`/api/articles/${id}?populate=*`, {
