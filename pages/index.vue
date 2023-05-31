@@ -2,9 +2,9 @@
     <div class="title-container">
       <h1 class="blog-title">Hi! I'm David.</h1>
     </div>
-    <h3 class="blog-second-title">隨手紀錄.</h3>
+    <h3 class="blog-second-title">開發時的隨手札記</h3>
     <div class="searchbox">
-      <el-input v-model="searchWord" class="w-50 m-2" placeholder="Type something" @click="searchBox = true">
+      <el-input v-model="searchWord" class="w-50 m-2" placeholder="搜尋" @click="searchBox = true">
         <template #prefix>
           <el-icon class="el-input__icon">
             <!-- <search /> -->
@@ -13,7 +13,7 @@
       </el-input>
     </div>
     <transition>
-      <SearchBox :posts="posts.data" @close="searchBox = false" v-show="searchBox" />
+      <SearchBox :posts="posts" @close="searchBox = false" v-if="searchBox" />
     </transition>
     <div class="category-container flex justify-space-between mb-4">
       <button
@@ -33,12 +33,12 @@
             <!-- <div v-if="loading" class="load-wrapp">
                 <LoadingSpinner />
             </div> -->
-            <PostList :posts="filterPostsByCategory" />
+            <PostList :posts="filterPostsByCategory" infinity-scroll />
           </el-col>
     
           <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6" class="hidden-sm-and-down">
             <div class="profile-container">
-                <!-- <Profile></Profile> -->
+                <Profile></Profile>
             </div>
           </el-col>
         </el-row>
@@ -65,7 +65,7 @@ posts.value = _posts.value.data
 // const postsCat = ref([new category('Javascript'), new category('Javascript')])
 
 const category = ref(['Javascript', 'Vue.js'])
-const categoryInActive = [false, false]
+const categoryInActive = ref([false, false])
 const currentCategory = ref('')
 
 function handleFilterCategoryBtn(index) {
@@ -78,10 +78,12 @@ function handleFilterCategoryBtn(index) {
     arr[ins] = false
   })
   categoryInActive.value[index] = true
-  currentCategory.value = data.category[index]
+  currentCategory.value = category.value[index]
+  console.log('Filter Category: ' + currentCategory.value)
 }
 
 const filterPostsByCategory = computed(() => {
+  console.log('computed posts')
   if (!currentCategory.value) {
     return posts.value
   }

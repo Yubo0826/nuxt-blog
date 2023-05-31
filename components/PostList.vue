@@ -14,16 +14,27 @@
               :src="post.attributes.image.data[0].attributes.url"
               @click="$router.push(`/posts/${post.id}`)"
             />
-            <div style="padding: 15px;">
+            <div style="padding: 0 15px 15px 15px;">
+
               <div class="title-container">
-                <h2 class="title" @click="$router.push(`/posts/${post.id}`)">{{ post.attributes.title }}</h2>
+                <h2 class="title" @click="$router.push(`/posts/${post.id}`)">
+                  <!-- NuxtLink 怎麼加入變數 -->
+                  {{ post.attributes.title }}
+                </h2>
               </div>
-              <!-- <Markdown :source="post.attributes.content"/> -->
-              <!-- <p style="line-height:1.7rem">{{ handlePost(post.attributes.content) }}</p>description -->
-              <div class="description-container">
+              
+              <!-- <div class="description-container">
                 <p style="line-height:1.7rem">{{ post.attributes.description }}</p>
+              </div> -->
+
+              <div class="date-container">
+                <p>
+                  <PostInfo :post="post.attributes" />
+                  <!-- {{ post.attributes.published_dated }} -->
+                </p>
               </div>
-              <div class="tags-container">
+
+              <!-- <div class="tags-container">
                 <el-button type="warning" size="small" plain
                     v-for="tag in post.attributes.tags.data"
                     :key="tag.id"
@@ -31,7 +42,9 @@
                 >
                     #{{ tag.attributes.name }}
                 </el-button>
-              </div>
+              </div> -->
+
+
             </div>
           </el-card>
         </div>
@@ -48,11 +61,12 @@ import { toRaw } from 'vue'
 console.log('post list 組件');
 
 const props = defineProps({
-  posts: Array
+  posts: Array,
+  infinityScroll: {
+    type: Boolean,
+    default: false
+  }
 })
-
-const posts = ref()
-
 
 console.log(toRaw(props.posts))
 
@@ -67,68 +81,72 @@ function handlePost(txt) {
 // watch文件
 // https://cn.vuejs.org/api/reactivity-core.html#watch
 watch(() => props.posts, (newValue, oldValue) => {
-  // console.log('watch.')
-  // const rawAllPosts = toRaw(newValue)
-  // console.log(rawAllPosts)
-  // if(rawAllPosts !== []) {
-  //   loadMorePosts()
-  // }const posts = ref()
-  posts = toRaw(newValue)
+  const rawAllPosts = toRaw(newValue)
+  if(rawAllPosts !== []) {
+    loadMorePosts()
+  }
 })
 
 onMounted(() => {
-  loadMorePosts()
-  window.addEventListener("scroll", handleScroll)
+  if (props.infinityScroll) {
+    loadMorePosts()
+    window.addEventListener("scroll", handleScroll)
+  } else {
+    displayPosts.value = toRaw(props.posts)
+  }
 })
 
 onUnmounted(() => {
-  window.removeEventListener("scroll", handleScroll)
+  if (props.infinityScroll) {
+    window.removeEventListener("scroll", handleScroll)
+  }
 })
 
 
 const scrollComponent = ref(null)
 
 function handleScroll(e) {
-  console.log('handleScroll')
-  let element = scrollComponent.value
-  if (element.getBoundingClientRect().bottom < window.innerHeight) {
+  // console.log('handleScroll')
+  // let elem = scrollComponent.value
+  // element.getBoundingClientRect().bottom < window.innerHeight
+  let scrollBottom = window.scrollHeight - window.scrollTop - window.clientHeight
+  if (window.innerHeight + window.pageYOffset >= document.body.offsetHeight) {
     loadMorePosts()
   }
 }
 
-const displayPosts = ref([])
-const busy = ref(false)
+const displayPosts = ref()
 const loading = ref(false)
-const postSize = ref(0)
+const size = ref(0)
 
 function loadMorePosts() {
-  console.log('loadMore.')
-  console.log('posts 長度 ' + posts)
-  const postsLen = posts.length
-  
+  const postsLen = props.posts.length
   // busy false 執行loadMore；busy true 不執行
-  busy.value = true
   loading.value = true 
 
   if (postsLen <= 6) {
-    displayPosts.value = props.posts
-    busy.value = true
+    displayPosts.value = toRaw(props.posts)
     loading.value = false
   } else {
-    postSize.value += 6
-    if (postSize.value <= postsLen) {
-      displayPosts.value = props.posts.slice(0, postSize.value)
-      busy.value = false
+    size.value += 6
+    if (size.value <= postsLen) {
+      displayPosts.value = toRaw(props.posts).slice(0, size.value)
       loading.value = false
     } else {
-      displayPosts.value = props.posts
-      busy.value = true
+      displayPosts.value = toRaw(props.posts)
       loading.value = false
     }
   }
 }
 </script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap');
+</style>
 <style scoped>
+  h2 {
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-weight: 600;
+  }
   .title:hover {
       text-decoration: underline;
       cursor: pointer;
@@ -150,7 +168,7 @@ function loadMorePosts() {
       margin-bottom: 19px;
   }
   .title-container {
-      height: 80px;
+      height: 85px;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
@@ -164,6 +182,11 @@ function loadMorePosts() {
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+      font-family: 'Lora', 'Times New Roman', serif
+  }
+  .date-container {
+    color: rgb(26, 26, 26);
+    font-size: 1rem;
   }
   .tags-container {
       margin: 5px 0;

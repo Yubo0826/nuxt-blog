@@ -1,9 +1,13 @@
 <template>
   <div id="searchbox-wrap">
       <div class="close" @click="$emit('close')"></div>
+    
       <div id="searchbox-container">
-          <div class="search-title">Search for posts</div>
-          <el-input v-model="searchWord" class="w-50 m-2 search-input" placeholder="Type something">
+          <div class="search-title">
+            <!-- Search for posts -->
+            搜尋文章
+          </div>
+          <el-input ref="searchInput" v-model="searchWord" class="w-50 m-2 search-input" placeholder="搜尋文章標題">
               <template #prefix>
                   <el-icon class="el-input__icon">
                     <!-- <search /> -->
@@ -24,7 +28,15 @@ const searchWord = ref('')
 const filterPosts = computed(() => {
   let posts = toRaw(props.posts) || []
   console.log(posts)
-  return posts.filter(el => el.attributes.title.toLowerCase().includes(searchWord.value.toLowerCase()))
+  const filterPosts = posts.filter(el => el.attributes.title.toLowerCase().includes(searchWord.value.toLowerCase()))
+  console.log(filterPosts)
+  return filterPosts
+})
+
+const searchInput = ref()
+onMounted(() => {
+    console.log(searchInput.value)
+    searchInput.value.focus()
 })
 </script>
 <style scoped>
