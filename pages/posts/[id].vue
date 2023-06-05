@@ -78,7 +78,7 @@ console.log(post.value)
     font-size: 14px;
   }
   .v-progressive-image {
-    max-width: 600px!important;
+    max-height: 250px;
     border-radius: 10px;
   }
   .loading-wrap {
@@ -152,6 +152,13 @@ console.log(post.value)
     height: 3rem;
     margin-bottom: 3rem;
     border-radius: 0.25rem;
+  }
+
+  /* 圖片自適應容器 */
+  :deep(.v-progressive-image-main) {
+    width: 100%;   
+    height: 100%;   
+    object-fit:cover;
   }
 
 </style>
